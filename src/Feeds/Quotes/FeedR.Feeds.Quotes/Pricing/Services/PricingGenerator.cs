@@ -24,6 +24,8 @@ internal sealed class PricingGenerator : IPricingGenerator
         _logger = logger;
     }
 
+    public IEnumerable<string> GetSymbols() => _currencyPairs.Keys;
+
     public async IAsyncEnumerable<CurrencyPair> StartAsync()
     {
         _isRunning = true;
@@ -45,6 +47,8 @@ internal sealed class PricingGenerator : IPricingGenerator
                     symbol, pricing, newPricing, nextTick);
                 
                 var currencyPair = new CurrencyPair(symbol, newPricing, timestamp);
+                
+                PricingUpdated?.Invoke(this, currencyPair);
 
                 yield return currencyPair;
 
@@ -65,4 +69,6 @@ internal sealed class PricingGenerator : IPricingGenerator
         var tick = _random.NextDouble() / 20;
         return (decimal) (sign * tick);
     }
+    
+    public event EventHandler<CurrencyPair>? PricingUpdated;
 }

@@ -31,5 +31,6 @@ var pricingStream = client.SubscribePricing(new PricingRequest
 while (await pricingStream.ResponseStream.MoveNext(CancellationToken.None))
 {
     var current = pricingStream.ResponseStream.Current;
-    Console.WriteLine($"{DateTimeOffset.FromUnixTimeMilliseconds(current.Timestamp):T} -> {current.Symbol} = {current.Value/100M:F}");
+    Console.WriteLine(
+        $"{DateTimeOffset.FromUnixTimeMilliseconds(current.Timestamp):T} -> {current.Symbol} = {current.Value / 100M:F}");
 }
