@@ -19,3 +19,5 @@ networks:
 volumes:
   redis:
     driver: local  
+
+# docker exec -it redis redis-cli
