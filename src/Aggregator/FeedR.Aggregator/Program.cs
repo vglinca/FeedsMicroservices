@@ -10,7 +10,8 @@ builder.Services
     .AddSerialization()
     .AddStreaming(cfg => cfg.UseRedisStreaming())
     .AddRedis(builder.Configuration)
-    .AddHostedService<PricingStreamBackgroundService>();
+    .AddHostedService<PricingStreamBackgroundService>()
+    .AddHostedService<WeatherStreamBackgroundService>();
 
 var app = builder.Build();
 
