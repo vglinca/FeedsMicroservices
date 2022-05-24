@@ -52,7 +52,7 @@ internal sealed class PricingGenerator : IPricingGenerator
 
                 yield return currencyPair;
 
-                await Task.Delay(TimeSpan.FromSeconds(2));
+                await Task.Delay(TimeSpan.FromSeconds(1));
             }
         }
     }

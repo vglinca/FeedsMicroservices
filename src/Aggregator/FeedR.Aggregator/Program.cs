@@ -1,4 +1,6 @@
 using FeedR.Aggregator.Services;
+using FeedR.Shared.Messaging;
+using FeedR.Shared.Pulsar;
 using FeedR.Shared.Redis;
 using FeedR.Shared.Redis.Streaming;
 using FeedR.Shared.Serialization;
@@ -11,7 +13,9 @@ builder.Services
     .AddStreaming(cfg => cfg.UseRedisStreaming())
     .AddRedis(builder.Configuration)
     .AddHostedService<PricingStreamBackgroundService>()
-    .AddHostedService<WeatherStreamBackgroundService>();
+    .AddHostedService<WeatherStreamBackgroundService>()
+    .AddSingleton<IPricingHandler, PricingHandler>()
+    .AddMessaging(cfg => cfg.UsePulsar());
 
 var app = builder.Build();
 
