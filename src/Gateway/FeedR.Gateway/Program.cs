@@ -1,3 +1,4 @@
+using FeedR.Shared.Observability;
 using Yarp.ReverseProxy.Transforms;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,14 +10,15 @@ builder.Services
     {
         t.AddRequestTransform(r =>
         {
-            var requestId = Guid.NewGuid().ToString("N");
-            r.ProxyRequest.Headers.Add("x-request-id", requestId);
+            var correlationId = Guid.NewGuid().ToString("N");
+            r.ProxyRequest.Headers.AddCorrelationId(correlationId);
+            
             return ValueTask.CompletedTask;
         });
     });
 
 var app = builder.Build();
-
+// app.UseCorrelationId();
 app.MapGet("/", () => "FeedR Gateway");
 app.MapReverseProxy();
 

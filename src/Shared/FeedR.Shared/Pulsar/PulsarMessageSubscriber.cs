@@ -25,7 +25,7 @@ internal sealed class PulsarMessageSubscriber : IMessageSubscriber
             .ToLowerInvariant() ?? string.Empty;
     }
 
-    public async Task SubscribeAsync<T>(string topic, Action<T> handler) where T : class, IMessage
+    public async Task SubscribeAsync<T>(string topic, Action<MessageEnvelope<T>> handler) where T : class, IMessage
     {
         var subscription = $"{_consumerName}_{topic}";
         var consumer = _pulsarClient.NewConsumer()
@@ -37,6 +37,7 @@ internal sealed class PulsarMessageSubscriber : IMessageSubscriber
         {
             var producer = message.Properties["producer"];
             var customId = message.Properties["custom_id"];
+            var correlationId = message.Properties["correlation_id"];
             _logger.LogInformation(
                 "Received a message with ID {MessageId} from producer: {Producer} with custom ID: {CustomId}",
                 message.MessageId, producer, customId);
@@ -46,7 +47,7 @@ internal sealed class PulsarMessageSubscriber : IMessageSubscriber
             {
                 var json = _serializer.Serialize(payload);
                 _logger.LogInformation("Received payload: {Payload}", json);
-                handler(payload);
+                handler(new MessageEnvelope<T>(payload, correlationId));
             }
 
             await consumer.Acknowledge(message);

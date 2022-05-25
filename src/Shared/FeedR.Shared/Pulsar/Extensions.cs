@@ -8,6 +8,7 @@ public static class Extensions
     public static IPulsarConfiguration UsePulsar(this IPulsarConfiguration configuration)
     {
         configuration.Services
+            .AddHttpContextAccessor()
             .AddSingleton<IMessagePublisher, PulsarMessagePublisher>()
             .AddSingleton<IMessageSubscriber, PulsarMessageSubscriber>();
         

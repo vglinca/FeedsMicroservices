@@ -8,7 +8,7 @@ internal sealed class NotifierMessagingBackgroundService : BackgroundService
     private readonly IMessageSubscriber _messageSubscriber;
     private readonly ILogger<NotifierMessagingBackgroundService> _logger;
 
-    public NotifierMessagingBackgroundService(IMessageSubscriber messageSubscriber, 
+    public NotifierMessagingBackgroundService(IMessageSubscriber messageSubscriber,
         ILogger<NotifierMessagingBackgroundService> logger)
     {
         _messageSubscriber = messageSubscriber;
@@ -17,13 +17,14 @@ internal sealed class NotifierMessagingBackgroundService : BackgroundService
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _messageSubscriber.SubscribeAsync<OrderPlacedEvent>("orders", message =>
+        _messageSubscriber.SubscribeAsync<OrderPlacedEvent>("orders", messageEnvelope =>
         {
             _logger.LogInformation(
-                "Received an order placed event. OrderId: {OrderId} - Symbol: {Symbol} - Timestamp: {Timestamp}",
-                message.OrderId, message.Symbol, message.Timestamp);
+                "Received an order placed event. OrderId: {OrderId} - Symbol: {Symbol} - Timestamp: {Timestamp}. With CorrelationId: {CorrelationId}",
+                messageEnvelope.Message.OrderId, messageEnvelope.Message.Symbol, messageEnvelope.Message.Timestamp,
+                messageEnvelope.CorrelationId);
         });
-        
+
         return Task.CompletedTask;
     }
 }
